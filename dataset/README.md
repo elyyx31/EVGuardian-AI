@@ -1,6 +1,10 @@
 # Dataset
 
-This directory contains information about the battery degradation dataset used for the EVGuardian AI project.
+## NASA Battery Degradation Dataset (Cycle-Level CSV)
+
+EVGuardian AI uses the NASA Battery Degradation Dataset in cycle-level CSV format for developing Machine Learning models for battery health analysis.
+
+### Purpose
 
 The dataset will be used for:
 
@@ -9,6 +13,18 @@ The dataset will be used for:
 - Remaining Useful Life (RUL) prediction
 - Machine Learning model training and evaluation
 
-The project uses lithium-ion battery aging data containing parameters such as voltage, current, temperature, capacity, and charge-discharge cycle information.
+### Dataset Source
 
-> Note: Large raw dataset files are not directly stored in this repository. The dataset source and preprocessing details will be provided here.
+NASA Battery Degradation Dataset (Cycle-Level CSV) - Kaggle
+
+https://www.kaggle.com/datasets/yashxss/nasa-battery-cycle-level-dataset
+
+### Usage in EVGuardian AI
+
+The historical battery degradation data will be used to train and evaluate Machine Learning models for SOH and RUL prediction.
+
+After model training and validation, the selected model will be integrated with the Raspberry Pi-based hardware prototype for local Edge AI inference.
+
+### Note
+
+The complete raw dataset is not stored directly in this repository. It can be downloaded from the original Kaggle source provided above.
