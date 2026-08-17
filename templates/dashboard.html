@@ -63,6 +63,19 @@
 
             <h2>Battery Parameters</h2>
 
+            {% if error %}
+            <div class="error-banner">
+                <span>❌</span>
+                <div><strong>Input Error:</strong> {{ error }}</div>
+            </div>
+            {% endif %}
+
+            {% if warning %}
+            <div class="warning-banner">
+                <span>⚠️</span>
+                <div><strong>Domain Notice:</strong> {{ warning }}</div>
+            </div>
+            {% endif %}
 
             <form id="predictForm"
                   action="/predict"
@@ -79,6 +92,7 @@
                         name="Cycle"
                         step="any"
                         value="{{ inputs.Cycle if inputs else '' }}"
+                        placeholder="e.g. 200"
                         required>
 
                 </div>
@@ -94,6 +108,7 @@
                         name="Voltage"
                         step="any"
                         value="{{ inputs.Voltage if inputs else '' }}"
+                        placeholder="e.g. 3.70"
                         required>
 
                 </div>
@@ -109,6 +124,7 @@
                         name="Current"
                         step="any"
                         value="{{ inputs.Current if inputs else '' }}"
+                        placeholder="e.g. 1.00"
                         required>
 
                 </div>
@@ -124,6 +140,7 @@
                         name="Temperature"
                         step="any"
                         value="{{ inputs.Temperature if inputs else '' }}"
+                        placeholder="e.g. 30.0"
                         required>
 
                 </div>
@@ -131,7 +148,7 @@
 
                 <div class="input-group">
 
-                    <label>Charge Time (hr)</label>
+                    <label>Charge Time</label>
 
                     <input
                         type="number"
@@ -139,6 +156,7 @@
                         name="ChargeTime"
                         step="any"
                         value="{{ inputs.ChargeTime if inputs else '' }}"
+                        placeholder="e.g. 75.0"
                         required>
 
                 </div>
@@ -146,7 +164,7 @@
 
                 <div class="input-group">
 
-                    <label>Discharge Time (hr)</label>
+                    <label>Discharge Time</label>
 
                     <input
                         type="number"
@@ -154,6 +172,7 @@
                         name="DischargeTime"
                         step="any"
                         value="{{ inputs.DischargeTime if inputs else '' }}"
+                        placeholder="e.g. 75.0"
                         required>
 
                 </div>
@@ -161,7 +180,7 @@
 
                 <div class="input-group">
 
-                    <label>Internal Resistance</label>
+                    <label>Internal Resistance (Ω)</label>
 
                     <input
                         type="number"
@@ -169,6 +188,7 @@
                         name="InternalResistance"
                         step="any"
                         value="{{ inputs.InternalResistance if inputs else '' }}"
+                        placeholder="e.g. 0.052"
                         required>
 
                 </div>
@@ -184,6 +204,7 @@
                         name="Capacity"
                         step="any"
                         value="{{ inputs.Capacity if inputs else '' }}"
+                        placeholder="e.g. 2.48"
                         required>
 
                 </div>
@@ -191,7 +212,7 @@
 
                 <div class="input-group">
 
-                    <label>Humidity (%)</label>
+                    <label>Ambient Humidity (%)</label>
 
                     <input
                         type="number"
@@ -199,6 +220,7 @@
                         name="AmbientHumidity"
                         step="any"
                         value="{{ inputs.AmbientHumidity if inputs else '' }}"
+                        placeholder="e.g. 50.0"
                         required>
 
                 </div>
@@ -214,6 +236,7 @@
                         name="C_Rate"
                         step="any"
                         value="{{ inputs.C_Rate if inputs else '' }}"
+                        placeholder="e.g. 1.00"
                         required>
 
                 </div>
@@ -294,19 +317,19 @@
 
                     <tr>
                         <td>Charge Time</td>
-                        <td>{{ inputs.ChargeTime }} hr</td>
+                        <td>{{ inputs.ChargeTime }}</td>
                     </tr>
 
 
                     <tr>
                         <td>Discharge Time</td>
-                        <td>{{ inputs.DischargeTime }} hr</td>
+                        <td>{{ inputs.DischargeTime }}</td>
                     </tr>
 
 
                     <tr>
                         <td>Internal Resistance</td>
-                        <td>{{ inputs.InternalResistance }}</td>
+                        <td>{{ inputs.InternalResistance }} Ω</td>
                     </tr>
 
 
@@ -539,27 +562,17 @@
 
 function loadSampleData() {
 
-
+    // Realistic representative values from active dataset (Cycle 200)
     document.getElementById("Cycle").value = 200;
-
-    document.getElementById("Voltage").value = 4.0;
-
-    document.getElementById("Current").value = 1.5;
-
-    document.getElementById("Temperature").value = 30;
-
-    document.getElementById("ChargeTime").value = 2;
-
-    document.getElementById("DischargeTime").value = 1.5;
-
-    document.getElementById("InternalResistance").value = 2;
-
-    document.getElementById("Capacity").value = 2;
-
-    document.getElementById("AmbientHumidity").value = 55;
-
-    document.getElementById("C_Rate").value = 0.75;
-
+    document.getElementById("Voltage").value = 3.70;
+    document.getElementById("Current").value = 1.00;
+    document.getElementById("Temperature").value = 30.0;
+    document.getElementById("ChargeTime").value = 75.0;
+    document.getElementById("DischargeTime").value = 75.0;
+    document.getElementById("InternalResistance").value = 0.052;
+    document.getElementById("Capacity").value = 2.48;
+    document.getElementById("AmbientHumidity").value = 50.0;
+    document.getElementById("C_Rate").value = 1.00;
 
     document.getElementById("predictForm").submit();
 
@@ -571,150 +584,124 @@ function loadSampleData() {
 
 
 // =========================================
-// BATTERY HISTORY
+// BATTERY HISTORY & EVALUATED POINT
 // =========================================
 
 const batteryHistory = {{ history | tojson }};
 
-
-const cycles = batteryHistory.map(
-    item => item.Cycle
+const baselineData = batteryHistory.map(
+    item => ({ x: item.Cycle, y: item.SOH })
 );
 
+const currentCycle = {{ inputs.Cycle | tojson }};
+const currentSOH = {{ result.SOH | tojson }};
 
-const sohValues = batteryHistory.map(
-    item => item.SOH
-);
+const currentPoint = [
+    { x: Number(currentCycle), y: Number(currentSOH) }
+];
 
 
 // =========================================
 // SOH CHART
 // =========================================
 
-const chartCanvas =
-    document.getElementById("sohChart");
-
+const chartCanvas = document.getElementById("sohChart");
 
 if (chartCanvas) {
 
-
-    const ctx =
-        chartCanvas.getContext("2d");
-
+    const ctx = chartCanvas.getContext("2d");
 
     new Chart(ctx, {
 
-
         type: "line",
-
 
         data: {
 
-            labels: cycles,
-
-            datasets: [{
-
-                label: "State of Health (%)",
-
-                data: sohValues,
-
-                borderColor: "#38bdf8",
-
-                backgroundColor:
-                    "rgba(56,189,248,0.10)",
-
-                borderWidth: 2,
-
-                pointRadius: 0,
-
-                tension: 0.25,
-
-                fill: true
-
-            }]
+            datasets: [
+                {
+                    label: "Dataset Degradation Profile",
+                    data: baselineData,
+                    borderColor: "#38bdf8",
+                    backgroundColor: "rgba(56,189,248,0.10)",
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.25,
+                    fill: true
+                },
+                {
+                    label: `Evaluated State (Cycle ${currentCycle}, SOH ${currentSOH}%)`,
+                    data: currentPoint,
+                    borderColor: "#f43f5e",
+                    backgroundColor: "#f43f5e",
+                    pointRadius: 8,
+                    pointHoverRadius: 11,
+                    pointStyle: "circle",
+                    showLine: false
+                }
+            ]
 
         },
-
 
         options: {
 
             responsive: true,
-
             maintainAspectRatio: false,
-
 
             plugins: {
 
                 legend: {
 
                     labels: {
-
                         color: "#ffffff"
-
-                    }
-
-                }
-
-            },
-
-
-            scales: {
-
-                x: {
-
-                    title: {
-
-                        display: true,
-
-                        text: "Battery Cycle",
-
-                        color: "#cbd5e1"
-
-                    },
-
-
-                    ticks: {
-
-                        color: "#cbd5e1"
-
-                    },
-
-
-                    grid: {
-
-                        color:
-                            "rgba(255,255,255,0.08)"
-
                     }
 
                 },
 
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: Cycle ${context.parsed.x}, SOH ${context.parsed.y}%`;
+                        }
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    type: "linear",
+
+                    title: {
+                        display: true,
+                        text: "Battery Cycle",
+                        color: "#cbd5e1"
+                    },
+
+                    ticks: {
+                        color: "#cbd5e1"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.08)"
+                    }
+
+                },
 
                 y: {
 
                     title: {
-
                         display: true,
-
                         text: "SOH (%)",
-
                         color: "#cbd5e1"
-
                     },
-
 
                     ticks: {
-
                         color: "#cbd5e1"
-
                     },
 
-
                     grid: {
-
-                        color:
-                            "rgba(255,255,255,0.08)"
-
+                        color: "rgba(255,255,255,0.08)"
                     }
 
                 }

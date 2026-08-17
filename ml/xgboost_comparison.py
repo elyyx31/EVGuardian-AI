@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -14,8 +15,10 @@ from xgboost import XGBClassifier
 # ============================
 # Load Dataset
 # ============================
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR.parent / "dataset" / "new_battery_dataset.csv"
 
-df = pd.read_csv("../dataset/new_battery_dataset.csv")
+df = pd.read_csv(DATASET_PATH)
 
 print("Dataset Loaded Successfully!")
 print(df.head())

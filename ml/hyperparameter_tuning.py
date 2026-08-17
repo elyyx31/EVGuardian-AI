@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -14,7 +15,10 @@ from sklearn.metrics import (
 # ===============================
 # Load Dataset
 # ===============================
-df = pd.read_csv(r"C:\Users\Divya\OneDrive\Desktop\EVGuardian-AI\dataset\new_battery_dataset.csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR.parent / "dataset" / "new_battery_dataset.csv"
+
+df = pd.read_csv(DATASET_PATH)
 
 # ===============================
 # Create Battery Health Classes

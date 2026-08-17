@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import joblib
 
@@ -5,8 +6,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR.parent / "dataset" / "new_battery_dataset.csv"
+MODEL_SAVE_PATH = BASE_DIR.parent / "models" / "soh_model.pkl"
+
 # Load dataset
-df = pd.read_csv("../dataset/new_battery_dataset.csv")
+df = pd.read_csv(DATASET_PATH)
 
 # Input Features
 X = df[
@@ -63,6 +68,6 @@ print(f"RMSE     : {rmse:.4f}")
 print(f"R² Score : {r2:.4f}")
 
 # Save model
-joblib.dump(model, "../models/soh_model.pkl")
+joblib.dump(model, MODEL_SAVE_PATH)
 
 print("\nSOH model saved successfully!")

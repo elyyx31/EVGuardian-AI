@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
@@ -9,7 +10,10 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 # 1. LOAD DATASET
 # ==========================================
 
-df = pd.read_csv("../dataset/new_battery_dataset.csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR.parent / "dataset" / "new_battery_dataset.csv"
+
+df = pd.read_csv(DATASET_PATH)
 
 # Sort according to cycle
 df = df.sort_values("Cycle").reset_index(drop=True)
