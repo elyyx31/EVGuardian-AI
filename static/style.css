@@ -1,0 +1,485 @@
+/* ===========================
+   EV Guardian AI Dashboard
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    background:linear-gradient(135deg,#08111f,#0f172a,#16243d);
+
+    min-height:100vh;
+
+    color:white;
+
+}
+
+.container{
+
+    width:96%;
+
+    max-width:1800px;
+
+    margin:auto;
+
+    padding:35px 50px;
+
+}
+header{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+header h1{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#5dade2;
+
+}
+
+header p{
+
+    margin-top:10px;
+
+    color:#cbd5e1;
+
+}
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns: 42% 58%;
+
+    gap:35px;
+
+    align-items:start;
+
+}
+
+.left-panel,
+.right-panel{
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:24px;
+
+    padding:40px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    min-height:720px;
+
+}
+/* ==========================
+        FORM
+========================== */
+
+.left-panel h2{
+
+    margin-bottom:30px;
+
+    font-size:34px;
+
+}
+
+.input-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    margin-bottom:18px;
+
+}
+
+.input-group label{
+
+    font-size:15px;
+
+    margin-bottom:8px;
+
+    color:#d7dde8;
+
+    font-weight:500;
+
+}
+
+.input-group input{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:none;
+
+    outline:none;
+
+    background:#111827;
+
+    color:white;
+
+    font-size:16px;
+
+    border:2px solid transparent;
+
+    transition:.3s;
+
+}
+
+.input-group input:focus{
+
+    border:2px solid #38bdf8;
+
+    box-shadow:0 0 15px rgba(56,189,248,.45);
+
+}
+
+button{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(90deg,#2563eb,#38bdf8);
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 15px 35px rgba(37,99,235,.45);
+
+}
+/* ---------- Input Parameters Table ---------- */
+
+.input-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+.input-table td{
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    color:white;
+    font-size:15px;
+}
+
+.input-table td:first-child{
+    font-weight:600;
+}
+
+.input-table td:last-child{
+    text-align:right;
+}
+
+.input-table td:last-child{
+    text-align:right;
+}
+
+
+/* =========================================
+   EV GUARDIAN AI - AI RESULT CARDS
+   ========================================= */
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(70, 170, 255, 0.45);
+}
+
+.metric-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.metric-value {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.metric-subtitle {
+    margin-top: 6px;
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.soh-card .metric-value {
+    color: #4db8ff;
+}
+
+.rul-card .metric-value {
+    color: #4db8ff;
+}
+
+
+/* =========================================
+   BATTERY STATUS
+   ========================================= */
+
+.status-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 14px;
+}
+
+.status-value {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.status-value.healthy {
+    color: #39d98a;
+    background: rgba(57, 217, 138, 0.12);
+    border: 1px solid rgba(57, 217, 138, 0.25);
+}
+
+.status-value.moderate {
+    color: #ffc857;
+    background: rgba(255, 200, 87, 0.12);
+    border: 1px solid rgba(255, 200, 87, 0.25);
+}
+
+.status-value.poor {
+    color: #ff5c5c;
+    background: rgba(255, 92, 92, 0.12);
+    border: 1px solid rgba(255, 92, 92, 0.25);
+}
+
+
+/* =========================================
+   RECOMMENDATION
+   ========================================= */
+
+.recommendation-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 14px;
+}
+
+.recommendation-card p {
+    margin-top: 10px;
+    line-height: 1.6;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+/* =========================================
+   SOH CIRCULAR GAUGE
+   ========================================= */
+
+.soh-gauge {
+
+    width: 150px;
+    height: 150px;
+
+    margin: 18px auto;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #38bdf8 var(--soh),
+            rgba(255,255,255,0.08) 0
+        );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+
+}
+
+
+/* Inner circle */
+
+.soh-gauge-inner {
+
+    width: 118px;
+    height: 118px;
+
+    border-radius:50%;
+
+    background:#182235;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+/* Percentage */
+
+.soh-gauge-value {
+
+    font-size:26px;
+
+    font-weight:700;
+
+    color:#38bdf8;
+
+}
+
+
+/* Label */
+
+.soh-gauge-label {
+
+    font-size:11px;
+
+    opacity:.55;
+
+    margin-top:3px;
+
+}
+
+/* =========================================
+   SOH CIRCULAR GAUGE
+   ========================================= */
+
+.soh-gauge {
+    width: 150px;
+    height: 150px;
+    margin: 18px auto;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #38bdf8 var(--soh),
+            rgba(255,255,255,0.08) 0
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.soh-gauge-inner {
+    width: 118px;
+    height: 118px;
+
+    border-radius: 50%;
+
+    background: #182235;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.soh-gauge-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+.soh-gauge-label {
+    font-size: 11px;
+    opacity: 0.55;
+    margin-top: 3px;
+}
+
+/* =========================================
+   BATTERY DEGRADATION CHART
+   ========================================= */
+
+.chart-card {
+
+    background: rgba(255,255,255,0.035);
+
+    border: 1px solid rgba(255,255,255,0.10);
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    margin-top: 16px;
+
+}
+
+
+.chart-subtitle {
+
+    font-size: 12px;
+
+    opacity: 0.55;
+
+    margin-top: 4px;
+
+}
+
+
+.chart-container {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 300px;
+
+    margin-top: 20px;
+
+}

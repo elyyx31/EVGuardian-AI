@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EV Guardian AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <header>
+
+        <h1>EV Guardian AI</h1>
+
+        <p>
+            AI-Based Battery Health Monitoring &
+            Remaining Useful Life Prediction
+        </p>
+
+    </header>
+
+
+
+    <div class="dashboard">
+
+
+        <!-- ============================= -->
+        <!-- LEFT PANEL -->
+        <!-- ============================= -->
+
+        <div class="left-panel">
+
+            <h2>Battery Parameters</h2>
+
+
+            <form id="predictForm"
+                  action="/predict"
+                  method="POST">
+
+
+                <div class="input-group">
+
+                    <label>Cycle</label>
+
+                    <input
+                        type="number"
+                        id="Cycle"
+                        name="Cycle"
+                        step="any"
+                        value="{{ inputs.Cycle if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Voltage (V)</label>
+
+                    <input
+                        type="number"
+                        id="Voltage"
+                        name="Voltage"
+                        step="any"
+                        value="{{ inputs.Voltage if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Current (A)</label>
+
+                    <input
+                        type="number"
+                        id="Current"
+                        name="Current"
+                        step="any"
+                        value="{{ inputs.Current if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Temperature (°C)</label>
+
+                    <input
+                        type="number"
+                        id="Temperature"
+                        name="Temperature"
+                        step="any"
+                        value="{{ inputs.Temperature if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Charge Time (hr)</label>
+
+                    <input
+                        type="number"
+                        id="ChargeTime"
+                        name="ChargeTime"
+                        step="any"
+                        value="{{ inputs.ChargeTime if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Discharge Time (hr)</label>
+
+                    <input
+                        type="number"
+                        id="DischargeTime"
+                        name="DischargeTime"
+                        step="any"
+                        value="{{ inputs.DischargeTime if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Internal Resistance</label>
+
+                    <input
+                        type="number"
+                        id="InternalResistance"
+                        name="InternalResistance"
+                        step="any"
+                        value="{{ inputs.InternalResistance if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Capacity (Ah)</label>
+
+                    <input
+                        type="number"
+                        id="Capacity"
+                        name="Capacity"
+                        step="any"
+                        value="{{ inputs.Capacity if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Humidity (%)</label>
+
+                    <input
+                        type="number"
+                        id="AmbientHumidity"
+                        name="AmbientHumidity"
+                        step="any"
+                        value="{{ inputs.AmbientHumidity if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>C-Rate</label>
+
+                    <input
+                        type="number"
+                        id="C_Rate"
+                        name="C_Rate"
+                        step="any"
+                        value="{{ inputs.C_Rate if inputs else '' }}"
+                        required>
+
+                </div>
+
+
+                <!-- DEMO BUTTON -->
+
+                <button type="button"
+                        onclick="loadSampleData()">
+
+                    🚀 Run AI Demo
+
+                </button>
+
+
+                <!-- NORMAL PREDICTION -->
+
+                <button type="submit">
+
+                    Predict Battery
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- ============================= -->
+        <!-- RIGHT PANEL -->
+        <!-- ============================= -->
+
+        <div class="right-panel">
+
+            <h2>Battery Analysis</h2>
+
+
+            {% if result is defined and result %}
+
+
+            <!-- ============================= -->
+            <!-- PARAMETERS USED -->
+            <!-- ============================= -->
+
+            <div class="card">
+
+                <h3>Battery Parameters Used</h3>
+
+
+                <table class="input-table">
+
+
+                    <tr>
+                        <td>Cycle</td>
+                        <td>{{ inputs.Cycle }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Voltage</td>
+                        <td>{{ inputs.Voltage }} V</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Current</td>
+                        <td>{{ inputs.Current }} A</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Temperature</td>
+                        <td>{{ inputs.Temperature }} °C</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Charge Time</td>
+                        <td>{{ inputs.ChargeTime }} hr</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Discharge Time</td>
+                        <td>{{ inputs.DischargeTime }} hr</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Internal Resistance</td>
+                        <td>{{ inputs.InternalResistance }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Capacity</td>
+                        <td>{{ inputs.Capacity }} Ah</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Humidity</td>
+                        <td>{{ inputs.AmbientHumidity }} %</td>
+                    </tr>
+
+
+                    <tr>
+                        <td>C-Rate</td>
+                        <td>{{ inputs.C_Rate }}</td>
+                    </tr>
+
+
+                </table>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- SOH -->
+            <!-- ============================= -->
+
+            <div class="metric-card soh-card">
+
+                <div class="metric-title">
+                    🔋 State of Health
+                </div>
+
+
+                <div class="soh-gauge"
+                     style="--soh: {{ result.SOH }}%;">
+
+                    <div class="soh-gauge-inner">
+
+                        <div class="soh-gauge-value">
+
+                            {{ result.SOH }}%
+
+                        </div>
+
+
+                        <div class="soh-gauge-label">
+
+                            SOH
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric-subtitle">
+
+                    Battery condition score
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- RUL -->
+            <!-- ============================= -->
+
+            <div class="metric-card rul-card">
+
+                <div class="metric-title">
+
+                    ⏳ Remaining Useful Life
+
+                </div>
+
+
+                <div class="metric-value">
+
+                    {{ result.RUL }}
+
+                </div>
+
+
+                <div class="metric-subtitle">
+
+                    Remaining cycles
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- BATTERY HEALTH -->
+            <!-- ============================= -->
+
+            <div class="status-card">
+
+                <div class="metric-title">
+
+                    ❤️ Battery Health
+
+                </div>
+
+
+                <div class="status-value
+                    {% if result.Health == 'Healthy' %}
+                        healthy
+                    {% elif result.Health == 'Moderate' %}
+                        moderate
+                    {% else %}
+                        poor
+                    {% endif %}
+                ">
+
+                    {{ result.Health }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- RECOMMENDATION -->
+            <!-- ============================= -->
+
+            <div class="recommendation-card">
+
+                <div class="metric-title">
+
+                    💡 AI Recommendation
+
+                </div>
+
+
+                <p>
+
+                    {{ result.Recommendation }}
+
+                </p>
+
+            </div>
+
+
+
+            <!-- ============================= -->
+            <!-- DEGRADATION GRAPH -->
+            <!-- ============================= -->
+
+            <div class="chart-card">
+
+                <div class="metric-title">
+
+                    📈 Battery Degradation
+
+                </div>
+
+
+                <div class="chart-subtitle">
+
+                    State of Health vs Battery Cycle
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="sohChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+
+            <!-- ============================= -->
+            <!-- WELCOME -->
+            <!-- ============================= -->
+
+            <div class="welcome-card">
+
+                <h2>
+
+                    Welcome 👋
+
+                </h2>
+
+
+                <p>
+
+                    Enter the battery parameters on the left
+                    and click
+                    <strong>Predict Battery</strong>
+                    to generate the AI prediction.
+
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ============================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================= -->
+
+<script>
+
+
+function loadSampleData() {
+
+
+    document.getElementById("Cycle").value = 200;
+
+    document.getElementById("Voltage").value = 4.0;
+
+    document.getElementById("Current").value = 1.5;
+
+    document.getElementById("Temperature").value = 30;
+
+    document.getElementById("ChargeTime").value = 2;
+
+    document.getElementById("DischargeTime").value = 1.5;
+
+    document.getElementById("InternalResistance").value = 2;
+
+    document.getElementById("Capacity").value = 2;
+
+    document.getElementById("AmbientHumidity").value = 55;
+
+    document.getElementById("C_Rate").value = 0.75;
+
+
+    document.getElementById("predictForm").submit();
+
+}
+
+
+
+{% if result is defined and result %}
+
+
+// =========================================
+// BATTERY HISTORY
+// =========================================
+
+const batteryHistory = {{ history | tojson }};
+
+
+const cycles = batteryHistory.map(
+    item => item.Cycle
+);
+
+
+const sohValues = batteryHistory.map(
+    item => item.SOH
+);
+
+
+// =========================================
+// SOH CHART
+// =========================================
+
+const chartCanvas =
+    document.getElementById("sohChart");
+
+
+if (chartCanvas) {
+
+
+    const ctx =
+        chartCanvas.getContext("2d");
+
+
+    new Chart(ctx, {
+
+
+        type: "line",
+
+
+        data: {
+
+            labels: cycles,
+
+            datasets: [{
+
+                label: "State of Health (%)",
+
+                data: sohValues,
+
+                borderColor: "#38bdf8",
+
+                backgroundColor:
+                    "rgba(56,189,248,0.10)",
+
+                borderWidth: 2,
+
+                pointRadius: 0,
+
+                tension: 0.25,
+
+                fill: true
+
+            }]
+
+        },
+
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+
+            plugins: {
+
+                legend: {
+
+                    labels: {
+
+                        color: "#ffffff"
+
+                    }
+
+                }
+
+            },
+
+
+            scales: {
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Battery Cycle",
+
+                        color: "#cbd5e1"
+
+                    },
+
+
+                    ticks: {
+
+                        color: "#cbd5e1"
+
+                    },
+
+
+                    grid: {
+
+                        color:
+                            "rgba(255,255,255,0.08)"
+
+                    }
+
+                },
+
+
+                y: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "SOH (%)",
+
+                        color: "#cbd5e1"
+
+                    },
+
+
+                    ticks: {
+
+                        color: "#cbd5e1"
+
+                    },
+
+
+                    grid: {
+
+                        color:
+                            "rgba(255,255,255,0.08)"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+{% endif %}
+
+
+</script>
+
+
+</body>
+
+</html>
